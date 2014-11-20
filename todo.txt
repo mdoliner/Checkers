@@ -1,3 +1,4 @@
 -add save/load
 -add exit
+-better drawing
 -readme

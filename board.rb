@@ -1,11 +1,13 @@
 require_relative 'piece'
 require_relative 'empty_space'
+require 'colorize'
 
 class Board
 
   BOARD_SIZE = 8
   NUMBER_OF_ROWS_COLOR = 3
   KING_ROWS = {white: 0, black: 7}
+  CELL_HEIGHT = 3
 
 
   def initialize(new_board = true)
@@ -51,18 +53,48 @@ class Board
     pos.between?(0, BOARD_SIZE - 1)
   end
 
-  def render
+  def render_achromatic
     print "    "
     BOARD_SIZE.times { |col| print " #{(col+97).chr}  "}
     print "\n   ╔" + "═══╦" * (BOARD_SIZE-1) + "═══╗"
     @grid.each_with_index do |row, row_num|
       print "\n #{row_num+1} ║"
       row.each do |space|
-        print " #{space} ║"
+        print (" #{space} ║")
       end
       print "\n   ╠" + "═══╬"*(BOARD_SIZE-1) + "═══╣" unless row_num == 7
     end
     print "\n   ╚" + "═══╩" * (BOARD_SIZE-1) + "═══╝"
+  end
+
+  def render_chromatic
+    dark_square_color = :red
+    light_square_color = :light_white
+
+    print "   "
+    BOARD_SIZE.times { |col| print " #{(col+97).chr} "}
+
+    @grid.each_with_index do |row, row_num|
+      if row_num % 2 == 0
+        draw_row_cells(dark_square_color, light_square_color, row, row_num)
+      else
+        draw_row_cells(light_square_color, dark_square_color, row, row_num)
+      end
+    end
+    nil
+  end
+
+  def draw_row_cells(color1, color2, row, row_num)
+    puts
+    row.size.times do |space|
+      print " #{row_num+1} " if space == 0
+      if space % 2 == 0
+        print " #{row[space]} ".colorize(:background => color1)
+      else
+        print " #{row[space]} ".colorize(:background => color2)
+      end
+    end
+    nil
   end
 
   def inspect

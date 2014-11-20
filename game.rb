@@ -33,7 +33,7 @@ class Game
   private
 
   def draw_board
-    @board.render
+    @board.render_chromatic
   end
 
   def over?
