@@ -4,4 +4,12 @@ class EmptySpace < NilClass
     true
   end
 
+  def self.to_s
+    " "
+  end
+
+  def self.is_enemy?(color)
+    false
+  end
+
 end
