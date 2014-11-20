@@ -1,0 +1,3 @@
+-add king
+-add save/load
+-add exit

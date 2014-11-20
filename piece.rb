@@ -17,12 +17,12 @@ class Piece
   end
 
   def perform_moves(*moves)
-    if valid_moves_seq?(*moves)
+    if valid_move_seq?(*moves)
       perform_moves!(*moves)
     else
       raise InvalidMoveError.new "That is not a valid sequence of moves."
     end
-    
+
     nil
   end
 

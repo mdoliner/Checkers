@@ -27,7 +27,11 @@ class Board
     dup_board
   end
 
-  def to_s
+  def pieces_of_color(color)
+    pieces.select { |piece| piece.color == color}
+  end
+
+  def render
     @grid.each do |row|
       row.each do |space|
         print "#{space} | "
