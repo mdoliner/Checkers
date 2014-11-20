@@ -20,7 +20,9 @@ class HumanPlayer
 
   def moving_piece
     print "What piece would you like to move? "
-    piece = @board[parse_move(gets.chomp)]
+    move = gets.chomp
+    return :save if move.downcase == "save"
+    piece = @board[parse_move(move)]
     raise InvalidMoveError.new "That is not your piece!" if piece.color != @color
     piece
   end

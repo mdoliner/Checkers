@@ -4,11 +4,10 @@ require 'yaml'
 
 class Game
 
-  def self.load_game
-    load_game = YAML::load_file("checkers_auto.yml")
-    File.delete("checkers_auto.yml")
-    load_game
+  def self.load_game(filename)
+    load_game = YAML::load_file(filename)
   end
+
 
   def initialize
     @board = Board.new
@@ -32,8 +31,12 @@ class Game
       draw_board
       moving_piece = nil
 
-      puts "\n#{current_player.color.capitalize}'s turn to play."
+      puts "\n#{current_player.color.capitalize}'s turn to play. "
       moving_piece = current_player.moving_piece
+      if moving_piece == :save
+        moving_piece = nil
+        save_game
+      end
       moving_piece.start_moving
 
       draw_board
@@ -51,6 +54,13 @@ class Game
     ensure
       moving_piece.stop_moving if moving_piece
     end
+  end
+
+  def save_game
+    puts "What is the name of your saved game? "
+    filename = "./saves/" + gets.chomp + ".sav"
+    File.write(filename, YAML.dump(self))
+    abort
   end
 
   private
@@ -79,15 +89,42 @@ class Game
 end
 
 if __FILE__ == $PROGRAM_NAME
-  if File.exist?("checkers_auto.yml")
-    puts "Would you like to load your previous game? (y/n) "
-    if gets.chomp.downcase == "y"
-      Game.load_game.run_game
-    else
-      Game.new.run_game
-    end
-  else
-    Game.new.run_game
-  end
+  loop do
+    
+    system("clear")
+    puts "Welcome To".center(45)
+    puts "CHECKERS".center(45).colorize(:red).bold
+    puts "The Game of Luck, Skill, and Prosperity".center(45).blink
+    puts "\n\n\n Would you like to: "
+    puts " 1) Play a New Game"
+    puts " 2) Load a Previous Game"
+    puts " 3) Delete Saved Games"
+    print "\n Input the number of your choice: "
+    input = gets.chomp.to_i
 
+    if input == 1
+      Game.new.run_game
+
+    elsif input == 2
+      system("clear")
+      puts " Load Game".underline
+      puts " 0) Back to Main Menu"
+      Dir["./saves/*.sav"].each.with_index { |file, index| puts " #{index+1}) #{file}" }
+      print " Input the number of the game you would like to load: "
+      input = gets.chomp.to_i - 1
+      next if input == -1
+      Game.load_game(Dir["./saves/*.sav"][input]).run_game
+
+    elsif input == 3
+      system("clear")
+      puts " Delete Saved Games".underline
+      puts " 0) Back to Main Menu"
+      Dir["./saves/*.sav"].each.with_index { |file, index| puts " #{index+1}) #{file}" }
+      print " Input the number of the game you would like to delete: "
+      input = gets.chomp.to_i - 1
+      next if input == -1
+      File.delete(Dir["./saves/*.sav"][input])
+    end
+
+  end
 end
