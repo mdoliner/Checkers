@@ -16,6 +16,23 @@ class Piece
     @jump_deltas = jump_deltas
   end
 
+  def perform_moves!(*moves)
+    raise InvalidMoveError.new "Input positions of moves!" if moves.size == 0
+    if moves.size == 1
+      begin
+        perform_slide(moves.flatten)
+      rescue InvalidMoveError
+        perform_jump(moves.flatten)
+      end
+    else
+      moves.each do |move|
+        perform_jump(move)
+      end
+    end
+
+    nil
+  end
+
   def perform_slide(end_pos)
     if slide_moves.include?(end_pos)
       @board[@pos], @board[end_pos] = EmptySpace, self
