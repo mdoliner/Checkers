@@ -3,7 +3,7 @@ require_relative 'empty_space'
 
 class Board
 
-  SIZE = 8
+  BOARD_SIZE = 8
   NUMBER_OF_ROWS_COLOR = 3
   KING_ROWS = {white: 0, black: 7}
 
@@ -44,21 +44,25 @@ class Board
   end
 
   def promote_king_index(color)
-    @grid[KING_ROWS[color]].index { |piece| piece.color == color}
+    @grid[KING_ROWS[color]].index { |piece| piece.color == color }
+  end
+
+  def on_board?(pos)
+    pos.between?(0, BOARD_SIZE - 1)
   end
 
   def render
     print "    "
-    SIZE.times { |col| print " #{(col+97).chr}  "}
-    print "\n   ╔" + "═══╦" * (SIZE-1) + "═══╗"
+    BOARD_SIZE.times { |col| print " #{(col+97).chr}  "}
+    print "\n   ╔" + "═══╦" * (BOARD_SIZE-1) + "═══╗"
     @grid.each_with_index do |row, row_num|
       print "\n #{row_num+1} ║"
       row.each do |space|
         print " #{space} ║"
       end
-      print "\n   ╠" + "═══╬"*(SIZE-1) + "═══╣" unless row_num == 7
+      print "\n   ╠" + "═══╬"*(BOARD_SIZE-1) + "═══╣" unless row_num == 7
     end
-    print "\n   ╚" + "═══╩" * (SIZE-1) + "═══╝"
+    print "\n   ╚" + "═══╩" * (BOARD_SIZE-1) + "═══╝"
   end
 
   def inspect
@@ -67,7 +71,7 @@ class Board
   private
 
   def create_grid
-    @grid = Array.new(SIZE) { Array.new(SIZE, EmptySpace) }
+    @grid = Array.new(BOARD_SIZE) { Array.new(BOARD_SIZE, EmptySpace) }
   end
 
   def setup_board
@@ -78,7 +82,7 @@ class Board
   def place_pieces(color)
     NUMBER_OF_ROWS_COLOR.times do |row|
       row += 5 if color == :white
-      SIZE.times do |col|
+      BOARD_SIZE.times do |col|
         pos = [row, col]
         Piece.new(self, color, pos) if (col + row) % 2 == 1
       end

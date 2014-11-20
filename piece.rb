@@ -17,11 +17,6 @@ class Piece
     @jump_deltas = jump_deltas
   end
 
-  def move!(end_pos)
-    @board[end_pos] = self
-    @pos = end_pos
-  end
-
   def perform_moves(*moves)
     if valid_move_seq?(*moves)
       perform_moves!(*moves)
@@ -136,7 +131,7 @@ class Piece
     deltas.each do |delta|
       moves << @pos.add_delta(delta)
     end
-    moves.select { |move| move.all? { |pos| pos.between?(0, Board::SIZE - 1)}}
+    moves.select { |move| move.all? { |pos| @board.on_board?(pos)}}
   end
 
   def middle_pos(pos1, pos2)

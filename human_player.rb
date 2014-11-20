@@ -23,6 +23,7 @@ class HumanPlayer
       print "What piece would you like to move? "
       piece = @board[parse_move(gets.chomp)]
       raise InvalidMoveError.new "That is not your piece!" if piece.color != @color
+
       print "What sequence of moves would you like to perform? "
       moves = gets.chomp.split(" ").map { |move| parse_move(move) }
       piece.perform_moves(*moves)
@@ -30,12 +31,19 @@ class HumanPlayer
       puts e.message
       sleep(2)
       retry
+    rescue ArgumentError
+      puts "That is not a valid move."
+      sleep(2)
+      retry
     end
   end
 
   def parse_move(move)
     col = COL_LETTER_TO_NUM[move[0].downcase]
-    row = move[1].to_i - 1
+    row = Integer(move[1]) - 1
+    if col.nil? || !@board.on_board?(row)
+      raise InvalidMoveError.new "That is not a valid move."
+    end
     [row, col]
   end
 
