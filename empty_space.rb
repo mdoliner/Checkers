@@ -12,4 +12,8 @@ class EmptySpace < NilClass
     false
   end
 
+  def self.color
+    nil
+  end
+
 end

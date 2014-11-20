@@ -5,6 +5,8 @@ class Board
 
   SIZE = 8
   NUMBER_OF_ROWS_COLOR = 3
+  KING_ROWS = {white: 0, black: 7}
+
 
   def initialize(new_board = true)
     @grid = create_grid
@@ -23,7 +25,7 @@ class Board
 
   def dup
     dup_board = Board.new(false)
-    pieces.each { |piece| Piece.new(dup_board, piece.color, piece.pos)}
+    pieces.each { |piece| Piece.new(dup_board, piece.color, piece.pos, piece.king?)}
     dup_board
   end
 
@@ -31,13 +33,32 @@ class Board
     pieces.select { |piece| piece.color == color}
   end
 
-  def render
-    @grid.each do |row|
-      row.each do |space|
-        print "#{space} | "
-      end
-      puts
+  def promote_king(color)
+    promotion_index = promote_king_index(color)
+    if promotion_index
+      piece = self[[KING_ROWS[color], promotion_index]]
+      piece.make_king unless piece.king?
     end
+
+    nil
+  end
+
+  def promote_king_index(color)
+    @grid[KING_ROWS[color]].index { |piece| piece.color == color}
+  end
+
+  def render
+    print "    "
+    SIZE.times { |col| print " #{(col+97).chr}  "}
+    print "\n   ╔" + "═══╦" * (SIZE-1) + "═══╗"
+    @grid.each_with_index do |row, row_num|
+      print "\n #{row_num+1} ║"
+      row.each do |space|
+        print " #{space} ║"
+      end
+      print "\n   ╠" + "═══╬"*(SIZE-1) + "═══╣" unless row_num == 7
+    end
+    print "\n   ╚" + "═══╩" * (SIZE-1) + "═══╝"
   end
 
   def inspect

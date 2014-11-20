@@ -9,11 +9,17 @@ class Piece
   attr_reader :color
   attr_accessor :pos
 
-  def initialize(board, color, pos)
+  def initialize(board, color, pos, king = false)
     @board, @color, @pos = board, color, pos
     @board[pos] = self
+    @king = king
     @slide_deltas = slide_deltas
     @jump_deltas = jump_deltas
+  end
+
+  def move!(end_pos)
+    @board[end_pos] = self
+    @pos = end_pos
   end
 
   def perform_moves(*moves)
@@ -80,6 +86,16 @@ class Piece
     end
   end
 
+  def make_king
+    @slide_deltas = ALL_SLIDE_DELTAS
+    @jump_deltas = ALL_JUMP_DELTAS
+    @king = true
+  end
+
+  def king?
+    @king
+  end
+
   def is_enemy?(color)
     @color != color
   end
@@ -91,10 +107,12 @@ class Piece
   private
 
   def slide_deltas
+    return ALL_SLIDE_DELTAS if king?
     @color == :white ? ALL_SLIDE_DELTAS.take(2) : ALL_SLIDE_DELTAS.drop(2)
   end
 
   def jump_deltas
+    return ALL_JUMP_DELTAS if king?
     @color == :white ? ALL_JUMP_DELTAS.take(2) : ALL_JUMP_DELTAS.drop(2)
   end
 
@@ -115,11 +133,6 @@ class Piece
       moves << @pos.add_delta(delta)
     end
     moves.select { |move| move.all? { |pos| pos.between?(0, Board::SIZE - 1)}}
-  end
-
-  def make_king
-    @slide_deltas = ALL_SLIDE_DELTAS
-    @jump_deltas = ALL_JUMP_DELTAS
   end
 
   def middle_pos(pos1, pos2)

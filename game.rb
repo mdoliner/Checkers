@@ -12,10 +12,12 @@ class Game
 
   def run_game
     until over?
+      system("clear")
       draw_board
       current_player = @players[@turn % 2]
-      puts "\n#{current_player.color}'s turn to play."
+      puts "\n#{current_player.color.capitalize}'s turn to play."
       current_player.perform_move
+      @board.promote_king(current_player.color)
       @turn += 1
     end
   end

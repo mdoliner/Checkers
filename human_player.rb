@@ -2,7 +2,7 @@ class HumanPlayer
 
   attr_reader :color
 
-  ROW_LETTER_TO_NUM = {
+  COL_LETTER_TO_NUM = {
     "a" => 0,
     "b" => 1,
     "c" => 2,
@@ -25,7 +25,7 @@ class HumanPlayer
       raise InvalidMoveError.new "That is not your piece!" if piece.color != @color
       print "What sequence of moves would you like to perform? "
       moves = gets.chomp.split(" ").map { |move| parse_move(move) }
-      piece.perform_moves(moves)
+      piece.perform_moves(*moves)
     rescue InvalidMoveError => e
       puts e.message
       sleep(2)
@@ -34,8 +34,8 @@ class HumanPlayer
   end
 
   def parse_move(move)
-    row = ROW_LETTER_TO_NUM[move[0].downcase]
-    col = move[1].to_i
+    col = COL_LETTER_TO_NUM[move[0].downcase]
+    row = move[1].to_i - 1
     [row, col]
   end
 
