@@ -1,9 +1,6 @@
 require_relative 'piece'
 require_relative 'empty_space'
 
-class InvalidMoveError < IOError
-end
-
 class Board
 
   SIZE = 8
@@ -22,36 +19,6 @@ class Board
   def []=(pos, piece)
     row, col = pos
     @grid[row][col] = piece
-  end
-
-  def perform_slide(start_pos, end_pos)
-    piece = self[start_pos]
-    raise InvalidMoveError.new "There is no piece there" if piece.nil?
-    if piece.slide_moves.include?(end_pos) && self[end_pos].nil?
-      self[start_pos], self[end_pos] = EmptySpace, piece
-      piece.pos = end_pos
-    else
-      raise InvalidMoveError.ewn "You can't move there."
-    end
-
-    nil
-  end
-
-  def perform_jump(start_pos, end_pos)
-    piece = self[start_pos]
-    raise InvalidMoveError.new "There is no piece there" if piece.nil?
-    middle_pos = middle_pos(start_pos, end_pos)
-    if piece.jump_moves.include?(end_pos) &&
-       self[end_pos].nil? &&
-       self[middle_pos].is_enemy?(piece.color)
-      self[start_pos], self[middle_pos] = EmptySpace, EmptySpace
-      self[end_pos] = piece
-      piece.pos = end_pos
-    else
-      raise InvalidMoveError.ewn "You can't move there."
-    end
-
-    nil
   end
 
   def to_s
@@ -87,10 +54,6 @@ class Board
     end
 
     nil
-  end
-
-  def middle_pos(pos1, pos2)
-    [(pos1[0] + pos2[0]) / 2, (pos1[1] + pos2[1]) / 2]
   end
 
 end

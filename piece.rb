@@ -1,3 +1,6 @@
+class InvalidMoveError < IOError
+end
+
 class Piece
 
   ALL_SLIDE_DELTAS = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
@@ -13,12 +16,41 @@ class Piece
     @jump_deltas = jump_deltas
   end
 
+  def perform_slide(end_pos)
+    if slide_moves.include?(end_pos)
+      @board[@pos], @board[end_pos] = EmptySpace, self
+      @pos = end_pos
+    else
+      raise InvalidMoveError.new "You can't move there."
+    end
+
+    nil
+  end
+
+  def perform_jump(end_pos)
+    middle_pos = middle_pos(@pos, end_pos)
+    if jump_moves.include?(end_pos)
+      @board[@pos], @board[middle_pos] = EmptySpace, EmptySpace
+      @board[end_pos] = self
+      @pos = end_pos
+    else
+      raise InvalidMoveError.new "You can't move there."
+    end
+
+    nil
+  end
+
+
   def slide_moves
-    moves(@slide_deltas)
+    moves = moves(@slide_deltas)
+    moves.select { |move| @board[move].nil? }
   end
 
   def jump_moves
-    moves(@jump_deltas)
+    moves(@jump_deltas).select do |move|
+      @board[move].nil?  &&
+      @board[middle_pos(@pos, move)].is_enemy?(@color)
+    end
   end
 
   def is_enemy?(color)
@@ -50,6 +82,10 @@ class Piece
   def make_king
     @slide_deltas = ALL_SLIDE_DELTAS
     @jump_deltas = ALL_JUMP_DELTAS
+  end
+
+  def middle_pos(pos1, pos2)
+    [(pos1[0] + pos2[0]) / 2, (pos1[1] + pos2[1]) / 2]
   end
 
 end
