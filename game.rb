@@ -13,38 +13,62 @@ class Game
   def initialize
     @board = Board.new
     @turn = 1
-    @players = [HumanPlayer.new(@board, :white),
+    @players = [HumanPlayer.new(@board, :red),
        HumanPlayer.new(@board, :black)]
   end
 
   def run_game
     until over?
       auto_save_game
-      system("clear")
-      draw_board
+
       current_player = @players[@turn % 2]
-      puts "\n#{current_player.color.capitalize}'s turn to play."
-      current_player.perform_move
-      @board.promote_king(current_player.color)
+      turn(current_player)
       @turn += 1
+    end
+  end
+
+  def turn(current_player)
+    begin
+      draw_board
+      moving_piece = nil
+
+      puts "\n#{current_player.color.capitalize}'s turn to play."
+      moving_piece = current_player.moving_piece
+      moving_piece.start_moving
+
+      draw_board
+      current_player.perform_move_sequence(moving_piece)
+      @board.promote_king(current_player.color)
+
+    rescue InvalidMoveError => e
+      puts e.message
+      sleep(2)
+      retry
+    rescue ArgumentError
+      puts "That is not a valid move."
+      sleep(2)
+      retry
+    ensure
+      moving_piece.stop_moving if moving_piece
     end
   end
 
   private
 
   def draw_board
+    system("clear")
     @board.render_chromatic
   end
 
   def over?
-    black_won? || white_won?
+    black_won? || red_won?
   end
 
   def black_won?
-    @board.pieces_of_color(:white).empty?
+    @board.pieces_of_color(:red).empty?
   end
 
-  def white_won?
+  def red_won?
     @board.pieces_of_color(:black).empty?
   end
 

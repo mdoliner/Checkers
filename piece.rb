@@ -95,24 +95,35 @@ class Piece
     @color != color
   end
 
+  def start_moving
+    @moving = true
+  end
+
+  def stop_moving
+    @moving = false
+  end
+
   def to_s
+    result = ""
     unless king?
-      @color == :white ? "○" : "●"
+      result = @color == :red ? "●".colorize(:red) : "●"
     else
-      @color == :white ? "◎" : "◉"
+      result = @color == :red ? "◎".colorize(:red) : "◎"
     end
+    result = result.blink if @moving
+    result
   end
 
   private
 
   def slide_deltas
     return ALL_SLIDE_DELTAS if king?
-    @color == :white ? ALL_SLIDE_DELTAS.take(2) : ALL_SLIDE_DELTAS.drop(2)
+    @color == :red ? ALL_SLIDE_DELTAS.take(2) : ALL_SLIDE_DELTAS.drop(2)
   end
 
   def jump_deltas
     return ALL_JUMP_DELTAS if king?
-    @color == :white ? ALL_JUMP_DELTAS.take(2) : ALL_JUMP_DELTAS.drop(2)
+    @color == :red ? ALL_JUMP_DELTAS.take(2) : ALL_JUMP_DELTAS.drop(2)
   end
 
   def valid_move_seq?(*moves)

@@ -6,7 +6,7 @@ class Board
 
   BOARD_SIZE = 8
   NUMBER_OF_ROWS_COLOR = 3
-  KING_ROWS = {white: 0, black: 7}
+  KING_ROWS = {red: 0, black: 7}
   CELL_HEIGHT = 3
 
 
@@ -68,8 +68,8 @@ class Board
   end
 
   def render_chromatic
-    dark_square_color = :red
-    light_square_color = :light_white
+    dark_square_color = :magenta
+    light_square_color = :light_cyan
 
     print "   "
     BOARD_SIZE.times { |col| print " #{(col+97).chr} "}
@@ -107,13 +107,13 @@ class Board
   end
 
   def setup_board
-    place_pieces(:white)
+    place_pieces(:red)
     place_pieces(:black)
   end
 
   def place_pieces(color)
     NUMBER_OF_ROWS_COLOR.times do |row|
-      row += 5 if color == :white
+      row += 5 if color == :red
       BOARD_SIZE.times do |col|
         pos = [row, col]
         Piece.new(self, color, pos) if (col + row) % 2 == 1
