@@ -21,6 +21,12 @@ class Board
     @grid[row][col] = piece
   end
 
+  def make_slide (start_pos, end_pos)
+
+  end
+
+  private
+
   def create_grid
     @grid = Array.new(BOARD_SIZE) { Array.new(BOARD_SIZE, EmptySpace) }
   end
@@ -35,7 +41,7 @@ class Board
       row += 5 if color == :black
       BOARD_SIZE.times do |col|
         pos = [row, col]
-        self[pos] = Piece.new(color) if (col + row) % 2 == 0
+        Piece.new(self, color, pos) if (col + row) % 2 == 0
       end
     end
 
