@@ -22,13 +22,14 @@ class HumanPlayer
     print "What piece would you like to move? "
     move = gets.chomp
     return :save if move.downcase == "save"
+    return :exit if move.downcase == "exit"
     piece = @board[parse_move(move)]
     raise InvalidMoveError.new "That is not your piece!" if piece.color != @color
     piece
   end
 
   def perform_move_sequence(piece)
-    print "\nWhat sequence of moves would you like to perform? "
+    print "\n\nWhat sequence of moves would you like to perform? "
     moves = gets.chomp.split(" ").map { |move| parse_move(move) }
     piece.perform_moves(*moves)
   end
