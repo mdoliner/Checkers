@@ -101,7 +101,11 @@ class Piece
   end
 
   def to_s
-    @color == :white ? "○" : "●"
+    unless king?
+      @color == :white ? "○" : "●"
+    else
+      @color == :white ? "◎" : "◉"
+    end
   end
 
   private
