@@ -89,8 +89,9 @@ class Game
 end
 
 if __FILE__ == $PROGRAM_NAME
+  Dir.mkdir("./saves") unless Dir.exist?("./saves")
   loop do
-    
+
     system("clear")
     puts "Welcome To".center(45)
     puts "CHECKERS".center(45).colorize(:red).bold
