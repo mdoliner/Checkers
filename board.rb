@@ -67,9 +67,7 @@ class Board
     print "\n   ╚" + "═══╩" * (BOARD_SIZE-1) + "═══╝"
   end
 
-  def render_chromatic
-    dark_square_color = :magenta
-    light_square_color = :light_cyan
+  def render_chromatic(dark_square_color, light_square_color)
 
     print "   "
     BOARD_SIZE.times { |col| print " #{(col+97).chr} "}

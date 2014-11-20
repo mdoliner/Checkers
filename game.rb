@@ -4,6 +4,10 @@ require 'yaml'
 
 class Game
 
+  COLOR_SCHEMES = {"classic" => [:red, :light_white],
+    "eighties" => [:magenta, :light_cyan],
+    "christmas" => [:light_red, :light_green] }
+
   def self.load_game(filename)
     load_game = YAML::load_file(filename)
   end
@@ -66,8 +70,11 @@ class Game
   private
 
   def draw_board
+    preferences = File.readlines("preferences.txt")
+
+    color_scheme = COLOR_SCHEMES[preferences[0]]
     system("clear")
-    @board.render_chromatic
+    @board.render_chromatic(color_scheme[0], color_scheme[1])
   end
 
   def over?
@@ -90,6 +97,12 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   Dir.mkdir("./saves") unless Dir.exist?("./saves")
+  unless File.exist?("preferences.txt")
+    file = File.open("preferences.txt", "w")
+    file.write("classic")
+    file.close
+  end
+
   loop do
 
     system("clear")
@@ -100,6 +113,7 @@ if __FILE__ == $PROGRAM_NAME
     puts " 1) Play a New Game"
     puts " 2) Load a Previous Game"
     puts " 3) Delete Saved Games"
+    puts " 4) Color Preferences"
     print "\n Input the number of your choice: "
     input = gets.chomp.to_i
 
@@ -111,7 +125,7 @@ if __FILE__ == $PROGRAM_NAME
       puts " Load Game".underline
       puts " 0) Back to Main Menu"
       Dir["./saves/*.sav"].each.with_index { |file, index| puts " #{index+1}) #{file}" }
-      print " Input the number of the game you would like to load: "
+      print "\n Input the number of the game you would like to load: "
       input = gets.chomp.to_i - 1
       next if input == -1
       Game.load_game(Dir["./saves/*.sav"][input]).run_game
@@ -121,10 +135,33 @@ if __FILE__ == $PROGRAM_NAME
       puts " Delete Saved Games".underline
       puts " 0) Back to Main Menu"
       Dir["./saves/*.sav"].each.with_index { |file, index| puts " #{index+1}) #{file}" }
-      print " Input the number of the game you would like to delete: "
+      print "\n Input the number of the game you would like to delete: "
       input = gets.chomp.to_i - 1
       next if input == -1
       File.delete(Dir["./saves/*.sav"][input])
+
+    elsif input == 4
+      system("clear")
+      puts " Color Preferences".underline
+      puts " 0) Back to Main Menu"
+      puts " 1) Classic"
+      puts " 2) Eighties"
+      puts " 3) Christmas"
+      print "\n Input the number of the color scheme you would like: "
+      input = gets.chomp.to_i
+      next if input == 0
+      preferences = File.open("preferences.txt", "w")
+      case input
+      when 1
+        preferences.write("classic")
+      when 2
+        preferences.write("eighties")
+      when 3
+        preferences.write("christmas")
+      end
+      preferences.close
+    else
+      next
     end
 
   end
