@@ -96,6 +96,10 @@ class Piece
     moves.select { |move| move.all? { |pos| pos.between?(0, Board::SIZE - 1)}}
   end
 
+  def valid_move_seq?(*moves)
+    dup_board = @board.dup
+  end
+
   def make_king
     @slide_deltas = ALL_SLIDE_DELTAS
     @jump_deltas = ALL_JUMP_DELTAS

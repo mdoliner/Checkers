@@ -6,9 +6,9 @@ class Board
   SIZE = 8
   NUMBER_OF_ROWS_COLOR = 3
 
-  def initialize(grid = create_grid)
-    @grid = grid
-    setup_board
+  def initialize(new_board = true)
+    @grid = create_grid
+    setup_board if new_board
   end
 
   def [](pos)
@@ -19,6 +19,12 @@ class Board
   def []=(pos, piece)
     row, col = pos
     @grid[row][col] = piece
+  end
+
+  def dup
+    dup_board = Board.new(false)
+    pieces.each { |piece| Piece.new(dup_board, piece.color, piece.pos)}
+    dup_board
   end
 
   def to_s
@@ -54,6 +60,10 @@ class Board
     end
 
     nil
+  end
+
+  def pieces
+    @grid.flatten.select { |tile| tile != EmptySpace }
   end
 
 end
