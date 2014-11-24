@@ -2,3 +2,5 @@
 -add exit
 -better drawing
 -readme
+-end row having multiple kings doesn't work
+-blinking doesn't stop if piece is unselected
